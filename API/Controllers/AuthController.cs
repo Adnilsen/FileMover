@@ -43,10 +43,10 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet("login")]
-    public ActionResult Login(string clientId, string clientSecret)
+    public IActionResult Login(string clientId, string clientSecret)
     {
         var redirectUri = _forgeService.GetAuthorizationURL(clientId, clientSecret);
-        return Redirect(redirectUri);
+        return Ok(redirectUri);
     }
 
     [HttpGet("logout")]
@@ -67,7 +67,7 @@ public class AuthController : ControllerBase
         Response.Cookies.Append("internal_token", tokens.InternalToken);
         Response.Cookies.Append("refresh_token", tokens.RefreshToken);
         Response.Cookies.Append("expires_at", tokens.ExpiresAt.ToString());
-        return Redirect("/halla");
+        return Redirect("http://localhost:8080");
     }
 
     [HttpGet("profile")]
@@ -79,10 +79,7 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
         dynamic profile = await _forgeService.GetUserProfile(tokens);
-        return new
-        {
-            name = string.Format("{0} {1}", profile.firstName, profile.lastName)
-        };
+        return profile;
     }
 
     [HttpGet("token")]

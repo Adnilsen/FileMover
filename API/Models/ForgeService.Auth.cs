@@ -12,7 +12,8 @@ namespace API.Models
     {
         new ForgeService(clientId, clientSecret, _callbackUri);
         
-        return new ThreeLeggedApi().Authorize(_clientId, "code", _callbackUri, InternalTokenScopes);
+        var url = new ThreeLeggedApi().Authorize(_clientId, "code", _callbackUri, InternalTokenScopes);
+        return url;
     }
 
     public async Task<Tokens> GenerateTokens(string code)

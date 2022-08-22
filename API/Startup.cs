@@ -27,6 +27,13 @@ public class Startup
             throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, or FORGE_CALLBACK_URL.");
         }
         services.AddSingleton<ForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeCallbackURL));
+        services.AddCors(opt => 
+            {
+                opt.AddPolicy("CorsPolicy", policy => 
+                {
+                    policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                });
+            });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +46,7 @@ public class Startup
         app.UseDefaultFiles();
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseCors("CorsPolicy");
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
