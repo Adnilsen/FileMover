@@ -7,11 +7,11 @@ namespace API.Models
 {
 public partial class ForgeService
 {
-    public async Task<IEnumerable<dynamic>> GetHubs(Tokens tokens)
+    public async Task<IEnumerable<dynamic>> GetHubs(string internalToken)
     {
         var hubs = new List<dynamic>();
         var api = new HubsApi();
-        api.Configuration.AccessToken = tokens.InternalToken;
+        api.Configuration.AccessToken = internalToken;
         var response = await api.GetHubsAsync();
         foreach (KeyValuePair<string, dynamic> hub in new DynamicDictionaryItems(response.data))
         {

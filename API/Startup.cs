@@ -31,7 +31,7 @@ public class Startup
             {
                 opt.AddPolicy("CorsPolicy", policy => 
                 {
-                    policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                    policy.AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins("http://localhost:8080");
                 });
             });
     }

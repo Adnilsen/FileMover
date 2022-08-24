@@ -27,9 +27,9 @@ namespace API.Controllers
             var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
             if (tokens == null)
             {
-                return Unauthorized();
+                return Unauthorized("No tokens avaliable");
             }
-            var hubs = await _forgeService.GetHubs(tokens);
+            var hubs = await _forgeService.GetHubs(tokens.InternalToken);
             return JsonConvert.SerializeObject(hubs);
         }
 
