@@ -23,6 +23,7 @@ export const getProjectContentsList = function getProjectContentsListFunc(
   projectId,
   folderId
 ) {
+  console.log(folderId);
   if (folderId != null) {
     return axios.get(
       `http://localhost:8081/api/hubs/${hubId}/projects/${projectId}/contents?folder_id=${folderId}`,

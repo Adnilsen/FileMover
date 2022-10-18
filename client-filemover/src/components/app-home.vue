@@ -30,6 +30,8 @@ export default {
       const hubsresponse = await forgeService.getHubsList();
       console.log(hubsresponse);
       this.hubs.push(hubsresponse);
+      console.log(this.hubs[0].data[0]);
+
       this.chosenHub = this.hubs[0].data[0].id;
       for (let hub of this.hubs[0].data) {
         console.log(hub.id);
@@ -72,7 +74,6 @@ export default {
         this.items[0].children.push(contentJSON);
       }
       this.chosenFolder = this.items[0].children[0];
-      console.log(this.items);
       this.getFolderContent();
     },
     async getFolderContent() {
@@ -91,6 +92,7 @@ export default {
         };
         this.items[0].children[0].children.push(contentJSON);
       }
+      this.chosenFolder = this.items[0].children[0].children[10];
     },
   },
 };
