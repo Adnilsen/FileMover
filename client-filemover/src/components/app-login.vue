@@ -79,7 +79,7 @@ export default {
       if (accessTokenResult) {
         window.location.href = accessTokenResult.data;
       }
-      console.log(accessTokenResult);
+      console.log(clientSecret);
     },
     submit() {
       this.$v.$touch();

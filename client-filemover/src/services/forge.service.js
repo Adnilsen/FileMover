@@ -1,5 +1,15 @@
 import axios from "axios";
 
+export const getUserProfile = function getUserProfileFunc() {
+  return axios.get("http://localhost:8081/api/hubs/user", {
+    headers: {
+      // remove headers
+    },
+    withCredentials: true,
+  });
+};
+
+
 export const getHubsList = function getHubsListFunc() {
   return axios.get("http://localhost:8081/api/hubs", {
     headers: {
@@ -46,3 +56,54 @@ export const getProjectContentsList = function getProjectContentsListFunc(
     );
   }
 };
+
+
+export const getFileVersion = function getFileVersionsFunc(
+  hubId,
+  projectId,
+  item
+) {
+  console.log(item + "her");
+  if (item != null) {
+    return axios.get(
+      `http://localhost:8081/api/hubs/${hubId}/projects/${projectId}/contents/${item}/versions`,
+      {
+        headers: {
+          // remove headers
+        },
+        withCredentials: true,
+      }
+    );
+  } else {
+    return axios.get(
+      `http://localhost:8081/api/hubs/${hubId}/projects/${projectId}/contents`,
+      {
+        headers: {
+          // remove headers
+        },
+        withCredentials: true,
+      }
+    );
+  }
+};
+
+export const getFileLinks = function getFileLinksFunc(
+  hubId,
+  bucketKey,
+  objectName
+) {
+  console.log(bucketKey + "her");
+  if (bucketKey != null) {
+    return axios.get(
+      `http://localhost:8081/api/hubs/${hubId}/bucket/${bucketKey}/contents/${objectName}/links`,
+      {
+        headers: {
+          
+        },
+        responseType: 'stream',
+        withCredentials: true,
+      }
+    );
+  }
+};
+

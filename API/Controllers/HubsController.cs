@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -32,7 +33,7 @@ namespace API.Controllers
             var hubs = await _forgeService.GetHubs(tokens.InternalToken);
             return JsonConvert.SerializeObject(hubs);
         }
-
+        
         [HttpGet("{hub}/projects")]
         public async Task<ActionResult<string>> ListProjects(string hub)
         {
@@ -66,6 +67,21 @@ namespace API.Controllers
                 return Unauthorized();
             }
             var versions = await _forgeService.GetVersions(hub, project, item, tokens);
+            return JsonConvert.SerializeObject(versions);
+        }
+
+        [HttpGet("{hub}/bucket/{bucketKey}/contents/{objectName}/links")]
+        public async Task<ActionResult<string>> GetDownloadLinks(string bucketKey, string objectName)
+        {
+            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+            if (tokens == null)
+            {
+                return Unauthorized();
+            }
+            var decodedBucketKey = HttpUtility.UrlDecode(bucketKey);
+            var key = decodedBucketKey.Split("/").Last();
+            Console.WriteLine(key);
+            var versions = await _forgeService.GetFileLink(key, objectName, tokens);
             return JsonConvert.SerializeObject(versions);
         }
     }

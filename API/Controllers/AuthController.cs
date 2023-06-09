@@ -24,10 +24,10 @@ public class AuthController : ControllerBase
         {
             return null;
         }
+        
         var tokens = new Tokens
         {
             PublicToken = request.Cookies["public_token"],
-            InternalToken = request.Cookies["internal_token"],
             RefreshToken = request.Cookies["refresh_token"],
             ExpiresAt = DateTime.Parse(request.Cookies["expires_at"])
         };
@@ -35,7 +35,6 @@ public class AuthController : ControllerBase
         {
             tokens = await forgeService.RefreshTokens(tokens);
             response.Cookies.Append("public_token", tokens.PublicToken);
-            response.Cookies.Append("internal_token", tokens.InternalToken);
             response.Cookies.Append("refresh_token", tokens.RefreshToken);
             response.Cookies.Append("expires_at", tokens.ExpiresAt.ToString());
         }

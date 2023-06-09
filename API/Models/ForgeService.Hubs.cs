@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Model;
@@ -69,7 +71,25 @@ public partial class ForgeService
         {
             versions.Add(version.Value);
         }
-        return versions;
+            return versions;
     }
-}
+
+
+        public async Task<string> GetFileLink(string bucketKey, string objectName, Tokens tokens)
+        {
+
+            var api = new ObjectsApi();
+
+            api.Configuration.AccessToken = tokens.InternalToken;
+            var fs = new FileStream(@"C:\temp\testFile.rvt", FileMode.Create);
+            FileStream ms = await api.GetObjectAsync("wip.dm.prod", "14526f79-6075-41e8-8c85-f33190bfd9b7.rvt");
+            /*Debug.WriteLine(result);
+            var response = await api.GetObjectDetailsAsync("wip.dm.prod", "14526f79-6075-41e8-8c85-f33190bfd9b7.rvt");
+*/          ms.Position = 0;
+            ms.CopyTo(fs);
+            fs.Flush();
+            fs.Close();
+            return "";
+        }
+    }
 }
