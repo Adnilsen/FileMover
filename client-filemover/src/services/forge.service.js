@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getUserProfile = function getUserProfileFunc() {
-  return axios.get("http://localhost:8081/api/hubs/user", {
+  return axios.get("http://localhost:8081/api/auth/user", {
     headers: {
       // remove headers
     },

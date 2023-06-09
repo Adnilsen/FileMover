@@ -8,9 +8,9 @@ namespace API.Models
 {
    public class Tokens
 {
-    public string InternalToken;
-    public string PublicToken;
-    public string RefreshToken;
+    public string? InternalToken;
+    public string? PublicToken;
+    public string? RefreshToken;
     public DateTime ExpiresAt;
 }
 
@@ -19,6 +19,7 @@ public partial class ForgeService
     private readonly string _clientId;
     private readonly string _clientSecret;
     private readonly string _callbackUri;
+    public string? internalToken { get; set; }
     private readonly Scope[] InternalTokenScopes = new Scope[] { Scope.DataRead, Scope.ViewablesRead };
     private readonly Scope[] PublicTokenScopes = new Scope[] { Scope.ViewablesRead };
 

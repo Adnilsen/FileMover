@@ -2,6 +2,7 @@
   <v-main>
     <v-card width="800" class="mx-auto mt-5">
       <h1>Hubs</h1>
+      <h2>User profile: {{userName}}</h2>
       <h3 v-if="chosenHub">Hubs id: {{ chosenHub }}</h3>
       <h3 v-if="chosenProject">Project id: {{ chosenProject }}</h3>
       <v-card-actions>
@@ -9,7 +10,21 @@
 
         <v-btn class="mr-4" @click="getFiles">Get files</v-btn>
       </v-card-actions>
-      <v-treeview v-if="items" color="warning" :items="items"></v-treeview>
+      <v-treeview 
+        v-if="items" 
+        
+        color="warning" 
+        :items="items" 
+        v-model="tree" 
+        activatable
+        item-key="id"
+        open-on-click>
+        <template slot="label" slot-scope="{ item }">
+          
+          <a v-if="item.type == 'items'" @click=" downloadFile(item)">{{ item.name }}</a>
+          <p v-else> {{item.name}} </p>
+        </template>
+      </v-treeview>
     </v-card>
   </v-main>
 </template>
@@ -27,12 +42,16 @@ export default {
     chosenFolder: "",
     items: [],
     chosenVersion: [],
+    userName: ""
   }),
+  created() {
+   this.getUserProfile()
+  },
   methods: {
 
     async getUserProfile() {
       const userresponse = await forgeService.getUserProfile();
-      console.log(userresponse.data);
+      this.userName = userresponse.data.dictionary.emailId;
     },
 
     async getFiles() {
@@ -73,16 +92,18 @@ export default {
         this.chosenHub,
         this.chosenProject
       );
-      for (let content of contentresponse.data) {
+      /*for (let content of contentresponse.data) {
         const contentJSON = {
           id: content.id,
           name: content.attributes.name,
           type: content.type,
           children: [],
         };
-        this.items[0].children.push(contentJSON);
-      }
-      this.chosenFolder = this.items[0].children[0];
+        
+      }*/
+      // eslint-disable-next-line no-undef
+      console.log(contentresponse.data[0].id)
+      this.chosenFolder = contentresponse.data[0]
       this.getFolderContent();
     },
     async getFolderContent() {
@@ -99,31 +120,42 @@ export default {
           type: content.type,
           children: [],
         };
-        this.items[0].children[0].children.push(contentJSON);
+        this.items[0].children.push(contentJSON);
       }
-      this.chosenFolder = this.items[0].children[0].children[10];
-      this.getFileVerison();
+      this.chosenFolder = this.items[0].children[10];
+      //this.getFileVerison();
     },
 
-    async getFileVerison() {
-      console.log(this.items[0].children[0].children[0].id + " her")
+    downloadFile(item) {
+      console.log(JSON.parse(JSON.stringify(item.type)))
+      console.log("Dette var verdien")
+
+      this.getFileVerison(item)
+    },
+
+    async getFileVerison(item) {
+      console.log(item.id + "jadda")
       const contentresponse = await forgeService.getFileVersion(
         this.chosenHub,
         this.chosenProject,
-        this.items[0].children[0].children[0].id
+        item.id
       );
-      this.getFileLink(contentresponse.data[0].relationships.storage.data.id);
+      this.getFileLink(contentresponse.data[0].relationships.storage.data.id, item.name);
     },
 
-    async getFileLink(bucketId) {
+
+
+    async getFileLink(bucketId, itemName) {
       let bucketIdNew = encodeURIComponent(bucketId)
-      console.log(bucketIdNew)
       
       const contentresponse = await forgeService.getFileLinks(
         this.chosenHub,  
         bucketIdNew,
-        "House Design.rvt"
+        itemName
       );
+      if(contentresponse.status == 200) {
+        alert("successfully downloaded the file")
+      }
       console.log(contentresponse);
     },
   },

@@ -18,31 +18,6 @@ public class AuthController : ControllerBase
         _forgeService = forgeService;
     }
 
-    public static async Task<Tokens> PrepareTokens(HttpRequest request, HttpResponse response, ForgeService forgeService)
-    {
-     
-        if (!request.Cookies.ContainsKey("internal_token"))
-        {
-            return null;
-        }
-        
-        var tokens = new Tokens
-        {
-            PublicToken = request.Cookies["public_token"],
-            InternalToken = request.Cookies["internal_token"],
-            RefreshToken = request.Cookies["refresh_token"],
-            ExpiresAt = DateTime.Parse(request.Cookies["expires_at"])
-        };
-        if (tokens.ExpiresAt < DateTime.Now.ToUniversalTime())
-        {
-            tokens = await forgeService.RefreshTokens(tokens);
-            response.Cookies.Append("public_token", tokens.PublicToken);
-            response.Cookies.Append("internal_token", tokens.InternalToken);
-            response.Cookies.Append("refresh_token", tokens.RefreshToken);
-            response.Cookies.Append("expires_at", tokens.ExpiresAt.ToString());
-        }
-        return tokens;
-    }
 
     [HttpGet("login")]
     public IActionResult Login(string clientId, string clientSecret)
@@ -55,7 +30,7 @@ public class AuthController : ControllerBase
     public ActionResult Logout()
     {
         Response.Cookies.Delete("public_token");
-        Response.Cookies.Delete("internal_token");
+        _forgeService.internalToken = null;
         Response.Cookies.Delete("refresh_token");
         Response.Cookies.Delete("expires_at");
         return Redirect("/");
@@ -65,17 +40,17 @@ public class AuthController : ControllerBase
     public async Task<ActionResult> Callback(string code)
     {
         var tokens = await _forgeService.GenerateTokens(code);
+        _forgeService.internalToken = tokens.InternalToken;
         Response.Cookies.Append("public_token", tokens.PublicToken);
-        Response.Cookies.Append("internal_token", tokens.InternalToken);
         Response.Cookies.Append("refresh_token", tokens.RefreshToken);
         Response.Cookies.Append("expires_at", tokens.ExpiresAt.ToString());
         return Redirect("http://localhost:8080");
     }
 
-    [HttpGet("profile")]
+    [HttpGet("user")]
     public async Task<dynamic> GetProfile()
     {
-        var tokens = await PrepareTokens(Request, Response, _forgeService);
+        var tokens = await _forgeService.PrepareTokens(Request, Response, _forgeService);
         if (tokens == null)
         {
             return Unauthorized();
@@ -87,7 +62,7 @@ public class AuthController : ControllerBase
     [HttpGet("token")]
     public async Task<dynamic> GetPublicToken()
     {
-        var tokens = await PrepareTokens(Request, Response, _forgeService);
+        var tokens = await _forgeService.PrepareTokens(Request, Response, _forgeService);
         if (tokens == null)
         {
             return Unauthorized();

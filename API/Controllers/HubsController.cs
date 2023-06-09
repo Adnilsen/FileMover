@@ -25,19 +25,20 @@ namespace API.Controllers
         [HttpGet()]
         public async Task<ActionResult<string>> ListHubs()
         {
-            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+            var tokens = await _forgeService.PrepareTokens(Request, Response, _forgeService);
             if (tokens == null)
             {
                 return Unauthorized("No tokens avaliable");
             }
             var hubs = await _forgeService.GetHubs(tokens.InternalToken);
+            _logger.LogInformation("Hubs lastet ned");
             return JsonConvert.SerializeObject(hubs);
         }
         
         [HttpGet("{hub}/projects")]
         public async Task<ActionResult<string>> ListProjects(string hub)
         {
-            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+            var tokens = await _forgeService.PrepareTokens(Request, Response, _forgeService);
             if (tokens == null)
             {
                 return Unauthorized();
@@ -49,7 +50,7 @@ namespace API.Controllers
         [HttpGet("{hub}/projects/{project}/contents")]
         public async Task<ActionResult<string>> ListItems(string hub, string project, [FromQuery] string? folder_id)
         {
-            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+            var tokens = await _forgeService.PrepareTokens(Request, Response, _forgeService);
             if (tokens == null)
             {
                 return Unauthorized();
@@ -61,7 +62,7 @@ namespace API.Controllers
         [HttpGet("{hub}/projects/{project}/contents/{item}/versions")]
         public async Task<ActionResult<string>> ListVersions(string hub, string project, string item)
         {
-            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+            var tokens = await _forgeService.PrepareTokens(Request, Response, _forgeService);
             if (tokens == null)
             {
                 return Unauthorized();
@@ -73,7 +74,7 @@ namespace API.Controllers
         [HttpGet("{hub}/bucket/{bucketKey}/contents/{objectName}/links")]
         public async Task<ActionResult<string>> GetDownloadLinks(string bucketKey, string objectName)
         {
-            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+            var tokens = await _forgeService.PrepareTokens(Request, Response, _forgeService);
             if (tokens == null)
             {
                 return Unauthorized();

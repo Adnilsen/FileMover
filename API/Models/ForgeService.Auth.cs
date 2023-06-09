@@ -16,7 +16,26 @@ namespace API.Models
         return url;
     }
 
-    public async Task<Tokens> GenerateTokens(string code)
+    public async Task<Tokens> PrepareTokens(HttpRequest request, HttpResponse response, ForgeService forgeService)
+    {
+        var tokens = new Tokens
+        {
+            PublicToken = request.Cookies["public_token"],
+            InternalToken = forgeService.internalToken,
+            RefreshToken = request.Cookies["refresh_token"],
+            ExpiresAt = DateTime.Parse(request.Cookies["expires_at"])
+        };
+        if (tokens.ExpiresAt < DateTime.Now.ToUniversalTime() || tokens.InternalToken == null)
+        {
+            tokens = await forgeService.RefreshTokens(tokens);
+            response.Cookies.Append("public_token", tokens.PublicToken);
+            response.Cookies.Append("refresh_token", tokens.RefreshToken);
+            response.Cookies.Append("expires_at", tokens.ExpiresAt.ToString());
+        }
+        return tokens;
+    }
+
+        public async Task<Tokens> GenerateTokens(string code)
     {
         dynamic internalAuth = await new ThreeLeggedApi().GettokenAsync(_clientId, _clientSecret, "authorization_code", code, _callbackUri);
         dynamic publicAuth = await new ThreeLeggedApi().RefreshtokenAsync(_clientId, _clientSecret, "refresh_token", internalAuth.refresh_token, PublicTokenScopes);

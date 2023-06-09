@@ -81,8 +81,8 @@ public partial class ForgeService
             var api = new ObjectsApi();
 
             api.Configuration.AccessToken = tokens.InternalToken;
-            var fs = new FileStream(@"C:\temp\testFile.rvt", FileMode.Create);
-            FileStream ms = await api.GetObjectAsync("wip.dm.prod", "14526f79-6075-41e8-8c85-f33190bfd9b7.rvt");
+            var fs = new FileStream(@"C:\temp\"+ objectName, FileMode.Create);
+            FileStream ms = await api.GetObjectAsync("wip.dm.prod", bucketKey);
             /*Debug.WriteLine(result);
             var response = await api.GetObjectDetailsAsync("wip.dm.prod", "14526f79-6075-41e8-8c85-f33190bfd9b7.rvt");
 */          ms.Position = 0;
