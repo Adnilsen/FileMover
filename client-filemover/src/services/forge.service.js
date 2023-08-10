@@ -33,7 +33,6 @@ export const getProjectContentsList = function getProjectContentsListFunc(
   projectId,
   folderId
 ) {
-  console.log(folderId);
   if (folderId != null) {
     return axios.get(
       `http://localhost:8081/api/hubs/${hubId}/projects/${projectId}/contents?folder_id=${folderId}`,
@@ -63,7 +62,6 @@ export const getFileVersion = function getFileVersionsFunc(
   projectId,
   item
 ) {
-  console.log(item + "her");
   if (item != null) {
     return axios.get(
       `http://localhost:8081/api/hubs/${hubId}/projects/${projectId}/contents/${item}/versions`,
@@ -92,7 +90,6 @@ export const getFileLinks = function getFileLinksFunc(
   bucketKey,
   objectName
 ) {
-  console.log(bucketKey + "her");
   if (bucketKey != null) {
     return axios.get(
       `http://localhost:8081/api/hubs/${hubId}/bucket/${bucketKey}/contents/${objectName}/links`,

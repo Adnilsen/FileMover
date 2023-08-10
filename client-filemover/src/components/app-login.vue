@@ -79,13 +79,11 @@ export default {
       if (accessTokenResult) {
         window.location.href = accessTokenResult.data;
       }
-      console.log(clientSecret);
     },
     submit() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         // do your submit logic here
-        console.log("yes");
         this.loginForge(this.clientSecret, this.clientId);
       }
     },
